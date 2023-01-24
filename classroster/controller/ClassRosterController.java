@@ -1,10 +1,20 @@
 package classroster.controller;
 
+import classroster.dao.*;
+import classroster.dto.Student;
 import classroster.ui.*;
 
 public class ClassRosterController {
-	UserIO io = new UserIOConsoleImpl();
-	ClassRosterView view = new ClassRosterView();
+	private UserIO io = new UserIOConsoleImpl();
+	private ClassRosterView view = new ClassRosterView();
+	private ClassRosterDAO dao = new ClassRosterDAOFileImpl();
+	
+	private void createStudent() {
+		view.displayBanner("CREATE STUDENT");
+		Student student = view.getNewStudentInfo();
+		dao.addStudent(student.getStudentID(), student);
+		view.displayActionSuccess("Created Student.");
+	}
 	
 	public void run(){
 		boolean run = true;
@@ -12,6 +22,7 @@ public class ClassRosterController {
 		
 		
 		while (run) {
+			view.displayBanner("MAIN MENU");
 			input = view.getMenuSelection();
 			
 			switch (input) {
@@ -19,7 +30,7 @@ public class ClassRosterController {
 				io.print("LIST STUDENT");
 				break;
 			case 2:
-				io.print("CREATE STUDENT");
+				createStudent();
 				break;
 			case 3:
 				io.print("VIEW STUDENT");

@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class Student {
 	private String firstName, lastName;
-	final String studentID;
+	private final String studentID;
 	private String cohort;
 	
 	public Student(String id) {
@@ -37,6 +37,10 @@ public class Student {
 
 	public String getStudentID() {
 		return studentID;
+	}
+	
+	public String toString() {
+		return String.format("%s: %s, %s", studentID, lastName, firstName);
 	}
 
 }
