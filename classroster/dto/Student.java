@@ -40,7 +40,7 @@ public class Student {
 	}
 	
 	public String toString() {
-		return String.format("%s: %s, %s", studentID, lastName, firstName);
+		return String.format("%s: %s, %s (%s)", studentID, lastName, firstName, cohort);
 	}
 
 }

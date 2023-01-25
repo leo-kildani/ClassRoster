@@ -1,12 +1,13 @@
 package classroster.ui;
 
+import java.util.List;
 import classroster.dto.Student;
 
 public class ClassRosterView {
 	private UserIO io = new UserIOConsoleImpl();
 	
 	public int getMenuSelection() {
-		io.print("1. List Student IDs");
+		io.print("1. List Students");
 		io.print("2. Create New Student");
 		io.print("3. View A Student");
 		io.print("4. Remove A Student");
@@ -21,6 +22,10 @@ public class ClassRosterView {
 		newStudent.setLastName(io.readString("Enter Student Last Name: "));
 		newStudent.setCohort(io.readString("Enter Student Cohort: "));
 		return newStudent;
+	}
+	
+	public void displayStudentRoster(List<Student> studentList) {
+		studentList.forEach(s -> io.print(s.toString()));
 	}
 	
 	public void displayBanner(String header) {

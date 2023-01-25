@@ -16,6 +16,13 @@ public class ClassRosterController {
 		view.displayActionSuccess("Created Student.");
 	}
 	
+	private void listStudents() {
+		view.displayBanner("STUDENT ROSTER");
+		view.displayStudentRoster(dao.getAllStudents());
+		view.displayActionSuccess("Displayed Students.");
+	}
+	
+	
 	public void run(){
 		boolean run = true;
 		int input;
@@ -27,7 +34,7 @@ public class ClassRosterController {
 			
 			switch (input) {
 			case 1:
-				io.print("LIST STUDENT");
+				listStudents();
 				break;
 			case 2:
 				createStudent();
