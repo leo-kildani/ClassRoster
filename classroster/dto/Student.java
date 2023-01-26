@@ -39,6 +39,7 @@ public class Student {
 		return studentID;
 	}
 	
+	@Override
 	public String toString() {
 		return String.format("%s: %s, %s (%s)", studentID, lastName, firstName, cohort);
 	}

@@ -28,6 +28,14 @@ public class ClassRosterView {
 		studentList.forEach(s -> io.print(s.toString()));
 	}
 	
+	public String getStudentID() {
+		return io.readString("Enter Student ID: ");
+	}
+	
+	public void displayStudentInfo(Student student) {
+		io.print(student.toString());
+	}
+	
 	public void displayBanner(String header) {
 		io.print("=== " + header + " ===");
 	}

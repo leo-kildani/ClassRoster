@@ -18,8 +18,7 @@ public class ClassRosterDAOFileImpl implements ClassRosterDAO {
 
 	@Override
 	public Student getStudent(String studentID) {
-		// TODO Auto-generated method stub
-		return null;
+		return studentRoster.get(studentID);
 	}
 
 	@Override
