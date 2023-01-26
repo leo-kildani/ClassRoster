@@ -42,6 +42,15 @@ public class ClassRosterView {
 			io.print("Student Not Found");
 	}
 	
+	public void displayRemoveStudent(Student student) {
+		if (student != null) {
+			displayStudentInfo(student);
+			io.print("This student has been removed");
+		}
+		else
+			io.print("Student Not Found");
+	}
+	
 	public void displayBanner(String header) {
 		io.print("=== " + header + " ===");
 	}

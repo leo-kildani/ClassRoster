@@ -19,7 +19,7 @@ public class ClassRosterController {
 	private void removeStudent() {
 		view.displayBanner("REMOVE STUDENT");
 		Student student = dao.removeStudent(view.getStudentID());
-		view.displayStudentInfo(student);
+		view.displayRemoveStudent(student);
 		view.displayActionSuccess("Remove Student Performed.");
 	}
 	
