@@ -2,12 +2,20 @@ package classroster.controller;
 
 import classroster.dao.*;
 import classroster.dto.Student;
-import classroster.ui.*;
+import classroster.ui.ClassRosterView;
 
 public class ClassRosterController {
-	private UserIO io = new UserIOConsoleImpl();
-	private ClassRosterView view = new ClassRosterView();
-	private ClassRosterDAO dao = new ClassRosterDAOFileImpl();
+	private ClassRosterView view;
+	private ClassRosterDAO dao;
+	
+	public ClassRosterController(ClassRosterView view, ClassRosterDAO dao) {
+		this.view = view;
+		this.dao = dao;
+	}
+	
+	public void exit() {
+		view.displayExitMessage();
+	}
 	
 	private void viewStudent() {
 		view.displayBanner("VIEW STUDENT");
@@ -47,26 +55,24 @@ public class ClassRosterController {
 			input = view.getMenuSelection();
 			
 			switch (input) {
-			case 1:
-				listStudents();
-				break;
-			case 2:
-				createStudent();
-				break;
-			case 3:
-				viewStudent();
-				break;
-			case 4:
-				removeStudent();
-				break;
-			case 5:
-				io.print("EXITING...");
-				run = false;
-				break;
-			default:
-				io.print("Unknown Command.");
+				case 1:
+					listStudents();
+					break;
+				case 2:
+					createStudent();
+					break;
+				case 3:
+					viewStudent();
+					break;
+				case 4:
+					removeStudent();
+					break;
+				case 5:
+					view.displayBanner("EXITING");
+					run = false;
+					break;
 			}
 		}
-		io.close();
+	exit();
 	}
 }

@@ -4,7 +4,11 @@ import java.util.List;
 import classroster.dto.Student;
 
 public class ClassRosterView {
-	private UserIO io = new UserIOConsoleImpl();
+	private UserIO io;
+	
+	public ClassRosterView(UserIO io) {
+		this.io = io;
+	}
 	
 	public int getMenuSelection() {
 		io.print("1. List Students");
@@ -49,6 +53,11 @@ public class ClassRosterView {
 		}
 		else
 			io.print("Student Not Found");
+	}
+	
+	public void displayExitMessage() {
+		io.print("Goodbye!");
+		io.close();
 	}
 	
 	public void displayBanner(String header) {
