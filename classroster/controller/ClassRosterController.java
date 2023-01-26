@@ -13,20 +13,20 @@ public class ClassRosterController {
 		view.displayBanner("VIEW STUDENT");
 		Student student = dao.getStudent(view.getStudentID());
 		view.displayStudentInfo(student);
-		view.displayActionSuccess("Viewed Student.");
+		view.displayActionSuccess("View Student Performed.");
 	}
 	
 	private void createStudent() {
 		view.displayBanner("CREATE STUDENT");
 		Student student = view.getNewStudentInfo();
 		dao.addStudent(student.getStudentID(), student);
-		view.displayActionSuccess("Created Student.");
+		view.displayActionSuccess("Create Student Perfomed.");
 	}
 	
 	private void listStudents() {
 		view.displayBanner("STUDENT ROSTER");
 		view.displayStudentRoster(dao.getAllStudents());
-		view.displayActionSuccess("Displayed Students.");
+		view.displayActionSuccess("Display Students Performed.");
 	}
 	
 	

@@ -25,7 +25,10 @@ public class ClassRosterView {
 	}
 	
 	public void displayStudentRoster(List<Student> studentList) {
-		studentList.forEach(s -> io.print(s.toString()));
+		if (studentList.isEmpty())
+			io.print("XXXEMPTYXXX");
+		else
+			studentList.forEach(s -> io.print(s.toString()));
 	}
 	
 	public String getStudentID() {
@@ -33,7 +36,10 @@ public class ClassRosterView {
 	}
 	
 	public void displayStudentInfo(Student student) {
-		io.print(student.toString());
+		if (student != null)
+			io.print(student.toString());
+		else
+			io.print("Student Not Found");
 	}
 	
 	public void displayBanner(String header) {
