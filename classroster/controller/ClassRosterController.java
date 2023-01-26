@@ -16,6 +16,13 @@ public class ClassRosterController {
 		view.displayActionSuccess("View Student Performed.");
 	}
 	
+	private void removeStudent() {
+		view.displayBanner("REMOVE STUDENT");
+		Student student = dao.removeStudent(view.getStudentID());
+		view.displayStudentInfo(student);
+		view.displayActionSuccess("Remove Student Performed.");
+	}
+	
 	private void createStudent() {
 		view.displayBanner("CREATE STUDENT");
 		Student student = view.getNewStudentInfo();
@@ -50,7 +57,7 @@ public class ClassRosterController {
 				viewStudent();
 				break;
 			case 4:
-				io.print("REMOVE STUDENT");
+				removeStudent();
 				break;
 			case 5:
 				io.print("EXITING...");
