@@ -49,7 +49,6 @@ public class ClassRosterController {
 		boolean run = true;
 		int input;
 		
-		
 		while (run) {
 			view.displayBanner("MAIN MENU");
 			input = view.getMenuSelection();
