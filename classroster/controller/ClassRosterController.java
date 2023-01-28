@@ -17,28 +17,28 @@ public class ClassRosterController {
 		view.displayExitMessage();
 	}
 	
-	private void viewStudent() {
+	private void viewStudent() throws ClassRosterDAOException {
 		view.displayBanner("VIEW STUDENT");
 		Student student = dao.getStudent(view.getStudentID());
 		view.displayStudentInfo(student);
 		view.displayActionSuccess("View Student Performed.");
 	}
 	
-	private void removeStudent() {
+	private void removeStudent() throws ClassRosterDAOException {
 		view.displayBanner("REMOVE STUDENT");
 		Student student = dao.removeStudent(view.getStudentID());
 		view.displayRemoveStudent(student);
 		view.displayActionSuccess("Remove Student Performed.");
 	}
 	
-	private void createStudent() {
+	private void createStudent() throws ClassRosterDAOException {
 		view.displayBanner("CREATE STUDENT");
 		Student student = view.getNewStudentInfo();
 		dao.addStudent(student.getStudentID(), student);
 		view.displayActionSuccess("Create Student Perfomed.");
 	}
 	
-	private void listStudents() {
+	private void listStudents() throws ClassRosterDAOException {
 		view.displayBanner("STUDENT ROSTER");
 		view.displayStudentRoster(dao.getAllStudents());
 		view.displayActionSuccess("Display Students Performed.");
@@ -53,23 +53,27 @@ public class ClassRosterController {
 			view.displayBanner("MAIN MENU");
 			input = view.getMenuSelection();
 			
-			switch (input) {
-				case 1:
-					listStudents();
-					break;
-				case 2:
-					createStudent();
-					break;
-				case 3:
-					viewStudent();
-					break;
-				case 4:
-					removeStudent();
-					break;
-				case 5:
-					view.displayBanner("EXITING");
-					run = false;
-					break;
+			try {
+				switch (input) {
+					case 1:
+						listStudents();
+						break;
+					case 2:
+						createStudent();
+						break;
+					case 3:
+						viewStudent();
+						break;
+					case 4:
+						removeStudent();
+						break;
+					case 5:
+						view.displayBanner("EXITING");
+						run = false;
+						break;
+				}
+			} catch (Exception e) {
+				view.displayErrorMessage(e.getMessage());
 			}
 		}
 	exit();

@@ -55,6 +55,11 @@ public class ClassRosterView {
 			io.print("Student Not Found");
 	}
 	
+	public void displayErrorMessage(String err) {
+		displayBanner("EXIT");
+		io.print(err);
+	}
+	
 	public void displayExitMessage() {
 		io.print("Goodbye!");
 		io.close();
@@ -65,7 +70,8 @@ public class ClassRosterView {
 	}
 	
 	public void displayActionSuccess(String action) {
-		io.readString(action + " Please hit ENTER to continue.");
+		io.print(action);
+		io.readString("Click SPACE to continue.", "");
 	}
 	
 }

@@ -13,6 +13,14 @@ public class UserIOConsoleImpl implements UserIO {
 		System.out.print(prompt);
 		return scnr.nextLine();
 	}
+	
+	public String readString(String prompt, String target) {
+		String res = this.readString(prompt);
+		while (!res.equals(target)) {
+			res = this.readString(prompt);
+		}
+		return res;
+	}
 
 	public int readInt(String prompt) {
 		int res;
