@@ -17,28 +17,28 @@ public class ClassRosterController {
 		view.displayExitMessage();
 	}
 	
-	private void viewStudent() throws ClassRosterDAOException {
+	private void viewStudent() throws ClassRosterPersistenceException {
 		view.displayBanner("VIEW STUDENT");
 		Student student = dao.getStudent(view.getStudentID());
 		view.displayStudentInfo(student);
 		view.displayActionSuccess("View Student Performed.");
 	}
 	
-	private void removeStudent() throws ClassRosterDAOException {
+	private void removeStudent() throws ClassRosterPersistenceException {
 		view.displayBanner("REMOVE STUDENT");
 		Student student = dao.removeStudent(view.getStudentID());
 		view.displayRemoveStudent(student);
 		view.displayActionSuccess("Remove Student Performed.");
 	}
 	
-	private void createStudent() throws ClassRosterDAOException {
+	private void createStudent() throws ClassRosterPersistenceException {
 		view.displayBanner("CREATE STUDENT");
 		Student student = view.getNewStudentInfo();
 		dao.addStudent(student.getStudentID(), student);
 		view.displayActionSuccess("Create Student Perfomed.");
 	}
 	
-	private void listStudents() throws ClassRosterDAOException {
+	private void listStudents() throws ClassRosterPersistenceException {
 		view.displayBanner("STUDENT ROSTER");
 		view.displayStudentRoster(dao.getAllStudents());
 		view.displayActionSuccess("Display Students Performed.");

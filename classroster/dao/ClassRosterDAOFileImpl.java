@@ -12,12 +12,12 @@ import java.util.*;
 import classroster.dto.Student;
 
 public class ClassRosterDAOFileImpl implements ClassRosterDAO {
-	private static final File ROSTER_FILE = new File("src\\main\\java\\roster.txt");
+	private static final File ROSTER_FILE = new File("roster.txt");
 	private static final String DELIMITER = "::";
 	private final Map<String, Student> studentRoster = new HashMap<>();
 	
 	@Override
-	public Student addStudent(String studentID,  Student student) throws ClassRosterDAOException {
+	public Student addStudent(String studentID,  Student student) throws ClassRosterPersistenceException {
 		loadRoster();
 		Student stu = studentRoster.put(studentID, student);
 		writeRoster();
@@ -25,19 +25,19 @@ public class ClassRosterDAOFileImpl implements ClassRosterDAO {
 	}
 
 	@Override
-	public List<Student> getAllStudents() throws ClassRosterDAOException {
+	public List<Student> getAllStudents() throws ClassRosterPersistenceException {
 		loadRoster();
 		return new ArrayList<>(studentRoster.values());
 	}
 
 	@Override
-	public Student getStudent(String studentID) throws ClassRosterDAOException {
+	public Student getStudent(String studentID) throws ClassRosterPersistenceException {
 		loadRoster();
 		return studentRoster.get(studentID);
 	}
 
 	@Override
-	public Student removeStudent(String studentID) throws ClassRosterDAOException {
+	public Student removeStudent(String studentID) throws ClassRosterPersistenceException {
 		loadRoster();
 		Student stu = studentRoster.remove(studentID);
 		writeRoster();
@@ -57,24 +57,24 @@ public class ClassRosterDAOFileImpl implements ClassRosterDAO {
 		return (stu.getStudentID() + DELIMITER + stu.getFirstName() + DELIMITER + stu.getLastName() + DELIMITER + stu.getCohort());
 	}
 	
-	private void loadRoster() throws ClassRosterDAOException{
+	private void loadRoster() throws ClassRosterPersistenceException{
 		try (Scanner in = new Scanner(new ByteArrayInputStream(Files.readAllBytes(ROSTER_FILE.toPath())))){
 			while (in.hasNextLine()) {
 				Student student = unmarshalStudent(in.nextLine());
 				studentRoster.put(student.getStudentID(), student);
 			}
 		} catch (IOException e) {
-			throw new ClassRosterDAOException("Could not load roster data into memory.", e);
+			throw new ClassRosterPersistenceException("Could not load roster data into memory.", e);
 		}
 	}
 	
-	private void writeRoster() throws ClassRosterDAOException{
+	private void writeRoster() throws ClassRosterPersistenceException{
 		try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(ROSTER_FILE)))){
 			for (Student stu: getAllStudents()) {
 				out.println(marshalStudent(stu));
 			}
 		} catch (IOException e) {
-			throw new ClassRosterDAOException("Could not save student data.", e);
+			throw new ClassRosterPersistenceException("Could not save student data.", e);
 		}
 	}
 }
