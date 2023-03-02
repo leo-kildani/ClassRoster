@@ -1,16 +1,19 @@
 package classroster.controller;
 
+import classroster.api.ClassRosterDataValidationExcepion;
+import classroster.api.ClassRosterDuplicateIdException;
+import classroster.api.ClassRosterServiceLayer;
 import classroster.dao.*;
 import classroster.dto.Student;
 import classroster.ui.ClassRosterView;
 
 public class ClassRosterController {
 	private ClassRosterView view;
-	private ClassRosterDAO dao;
+	private ClassRosterServiceLayer api;
 	
-	public ClassRosterController(ClassRosterView view, ClassRosterDAO dao) {
+	public ClassRosterController(ClassRosterView view, ClassRosterServiceLayer api) {
 		this.view = view;
-		this.dao = dao;
+		this.api = api;
 	}
 	
 	public void exit() {
@@ -19,28 +22,36 @@ public class ClassRosterController {
 	
 	private void viewStudent() throws ClassRosterPersistenceException {
 		view.displayBanner("VIEW STUDENT");
-		Student student = dao.getStudent(view.getStudentID());
+		Student student = api.retrieveStudent(view.getStudentID());
 		view.displayStudentInfo(student);
 		view.displayActionSuccess("View Student Performed.");
 	}
 	
 	private void removeStudent() throws ClassRosterPersistenceException {
 		view.displayBanner("REMOVE STUDENT");
-		Student student = dao.removeStudent(view.getStudentID());
+		Student student = api.removeStudent(view.getStudentID());
 		view.displayRemoveStudent(student);
 		view.displayActionSuccess("Remove Student Performed.");
 	}
 	
 	private void createStudent() throws ClassRosterPersistenceException {
 		view.displayBanner("CREATE STUDENT");
-		Student student = view.getNewStudentInfo();
-		dao.addStudent(student.getStudentID(), student);
-		view.displayActionSuccess("Create Student Perfomed.");
+		
+		do {
+			Student student = view.getNewStudentInfo();
+			try {
+				api.createStudent(student);
+				view.displayActionSuccess("Create Student Perfomed.");
+				break;
+			} catch (ClassRosterDuplicateIdException | ClassRosterDataValidationExcepion e) {
+			view.displayErrorMessage(e.getMessage());
+			}
+		} while (true);
 	}
 	
 	private void listStudents() throws ClassRosterPersistenceException {
 		view.displayBanner("STUDENT ROSTER");
-		view.displayStudentRoster(dao.getAllStudents());
+		view.displayStudentRoster(api.retrieveStudents());
 		view.displayActionSuccess("Display Students Performed.");
 	}
 	

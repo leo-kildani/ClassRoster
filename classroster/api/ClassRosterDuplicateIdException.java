@@ -6,5 +6,12 @@
 package classroster.api;
 
 public class ClassRosterDuplicateIdException extends Exception {
-
+ 
+		public ClassRosterDuplicateIdException(String msg) {
+			super(msg);
+		}
+		
+		public ClassRosterDuplicateIdException(String msg, Throwable cause) {
+			super(msg, cause);
+		}
 }

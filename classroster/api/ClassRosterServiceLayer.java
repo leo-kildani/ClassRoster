@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ClassRosterServiceLayer {
 
-		public boolean createStudent() throws ClassRosterDuplicateIdException, 
+		public void createStudent(Student student) throws ClassRosterDuplicateIdException, 
 											ClassRosterDataValidationExcepion,
 													ClassRosterPersistenceException;
 		

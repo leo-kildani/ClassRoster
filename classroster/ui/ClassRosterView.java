@@ -56,7 +56,7 @@ public class ClassRosterView {
 	}
 	
 	public void displayErrorMessage(String err) {
-		displayBanner("EXIT");
+		displayBanner("ERROR");
 		io.print(err);
 	}
 	
