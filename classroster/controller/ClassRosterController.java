@@ -1,10 +1,10 @@
 package classroster.controller;
 
-import classroster.api.ClassRosterDataValidationExcepion;
-import classroster.api.ClassRosterDuplicateIdException;
-import classroster.api.ClassRosterServiceLayer;
 import classroster.dao.*;
 import classroster.dto.Student;
+import classroster.service.ClassRosterDataValidationExcepion;
+import classroster.service.ClassRosterDuplicateIdException;
+import classroster.service.ClassRosterServiceLayer;
 import classroster.ui.ClassRosterView;
 
 public class ClassRosterController {

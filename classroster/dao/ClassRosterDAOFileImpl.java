@@ -12,9 +12,17 @@ import java.util.*;
 import classroster.dto.Student;
 
 public class ClassRosterDAOFileImpl implements ClassRosterDAO {
-	private static final File ROSTER_FILE = new File("roster.txt");
+	private final File roster_file;
 	private static final String DELIMITER = "::";
 	private final Map<String, Student> studentRoster = new HashMap<>();
+	
+	public ClassRosterDAOFileImpl() {
+		roster_file = new File("roster.txt");
+	}
+	
+	public ClassRosterDAOFileImpl(String rosterFile) {
+		roster_file = new File(rosterFile);
+	}
 	
 	@Override
 	public Student addStudent(String studentID,  Student student) throws ClassRosterPersistenceException {
@@ -58,7 +66,7 @@ public class ClassRosterDAOFileImpl implements ClassRosterDAO {
 	}
 	
 	private void loadRoster() throws ClassRosterPersistenceException{
-		try (Scanner in = new Scanner(new ByteArrayInputStream(Files.readAllBytes(ROSTER_FILE.toPath())))){
+		try (Scanner in = new Scanner(new ByteArrayInputStream(Files.readAllBytes(roster_file.toPath())))){
 			while (in.hasNextLine()) {
 				Student student = unmarshalStudent(in.nextLine());
 				studentRoster.put(student.getStudentID(), student);
@@ -69,7 +77,7 @@ public class ClassRosterDAOFileImpl implements ClassRosterDAO {
 	}
 	
 	private void writeRoster() throws ClassRosterPersistenceException{
-		try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(ROSTER_FILE)))){
+		try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(roster_file)))){
 			for (Student stu: getAllStudents()) {
 				out.println(marshalStudent(stu));
 			}

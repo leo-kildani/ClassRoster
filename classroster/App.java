@@ -1,12 +1,12 @@
 package classroster;
 
-import classroster.api.ClassRosterServiceLayer;
-import classroster.api.ClassRosterServiceLayerImpl;
 import classroster.controller.ClassRosterController;
 import classroster.dao.ClassRosterAuditDAO;
 import classroster.dao.ClassRosterAuditFileImpl;
 import classroster.dao.ClassRosterDAO;
 import classroster.dao.ClassRosterDAOFileImpl;
+import classroster.service.ClassRosterServiceLayer;
+import classroster.service.ClassRosterServiceLayerImpl;
 import classroster.ui.*;
 
 public class App {

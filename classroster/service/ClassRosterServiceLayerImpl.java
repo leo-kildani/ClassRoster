@@ -3,7 +3,7 @@
 *@date Mar 2, 2023
 */
 
-package classroster.api;
+package classroster.service;
 
 import java.util.List;
 

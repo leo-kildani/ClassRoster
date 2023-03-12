@@ -11,8 +11,8 @@ public interface ClassRosterDAO {
 	 * If there is already a student with the given student id it will return that student object.
 	 * Otherwise it will return null.
 	 * 
-	 * @paramstudentID id with which student is to be associated with
-	 * @paramStudent student to be added to the roster
+	 * @param studentID id with which student is to be associated with
+	 * @param Student student to be added to the roster
 	 * @return id if it exists, otherwise null
 	 * @throws ClassRosterPersistenceException 
 	 */

@@ -14,13 +14,21 @@ import java.time.LocalDateTime;
 
 public class ClassRosterAuditFileImpl implements ClassRosterAuditDAO {
 	
-	private final File AUDIT_LOG = new File("auditlog.txt");
+	private final File auditLog;
+	
+	public ClassRosterAuditFileImpl() {
+		auditLog = new File("auditlog.txt");
+	}
+	
+	public ClassRosterAuditFileImpl(String auditFile) {
+		auditLog = new File(auditFile);
+	}
 	
 	@Override
 	public void writeAuditEntry(String entry) throws ClassRosterPersistenceException {
 		LocalDateTime timestamp;
 		
-		try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(AUDIT_LOG, true)))){
+		try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(auditLog, true)))){
 			timestamp = LocalDateTime.now();
 			out.println(entry + " : " + timestamp);
 		} catch (IOException e) {

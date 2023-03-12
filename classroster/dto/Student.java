@@ -1,5 +1,6 @@
 package classroster.dto;
 
+import java.util.Objects;
 import java.util.Random;
 
 public class Student {
@@ -42,6 +43,24 @@ public class Student {
 	@Override
 	public String toString() {
 		return String.format("%s: %s, %s (%s)", studentID, lastName, firstName, cohort);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(cohort, firstName, lastName, studentID);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Student other = (Student) obj;
+		return Objects.equals(cohort, other.cohort) && Objects.equals(firstName, other.firstName)
+				&& Objects.equals(lastName, other.lastName) && Objects.equals(studentID, other.studentID);
 	}
 
 }
