@@ -50,8 +50,20 @@ public class ClassRosterController {
 	}
 	
 	private void listStudents() throws ClassRosterPersistenceException {
-		view.displayBanner("STUDENT ROSTER");
-		view.displayStudentRoster(api.retrieveStudents());
+		int input = view.getListSelection();
+		view.displayBanner("Student List");
+		switch (input) {
+			case 1: 
+				view.displayStudentRoster(api.retrieveStudentsByFirstName());
+				break;
+			
+			case 2:
+				view.displayStudentRoster(api.retrieveStudentsByLastName());
+				break;
+			case 3:
+				view.displayStudentRoster(api.retrieveStudentsByCohort());
+				break;
+		}
 		view.displayActionSuccess("Display Students Performed.");
 	}
 	

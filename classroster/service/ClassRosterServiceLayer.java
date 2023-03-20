@@ -17,6 +17,12 @@ public interface ClassRosterServiceLayer {
 		
 		public List<Student> retrieveStudents() throws ClassRosterPersistenceException;
 		
+		public List<Student> retrieveStudentsByFirstName() throws ClassRosterPersistenceException;
+		
+		public List<Student> retrieveStudentsByLastName() throws ClassRosterPersistenceException;
+		
+		public List<Student> retrieveStudentsByCohort() throws ClassRosterPersistenceException;
+		
 		public Student retrieveStudent(String id) throws ClassRosterPersistenceException;
 		
 		public Student removeStudent(String id) throws ClassRosterPersistenceException;

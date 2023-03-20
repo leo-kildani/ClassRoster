@@ -6,11 +6,13 @@
 package classroster.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import classroster.dao.ClassRosterAuditDAO;
 import classroster.dao.ClassRosterDAO;
 import classroster.dao.ClassRosterPersistenceException;
 import classroster.dto.Student;
+import classroster.dto.Student.CompareStudent;
 
 public class ClassRosterServiceLayerImpl implements ClassRosterServiceLayer {
 	
@@ -63,9 +65,35 @@ public class ClassRosterServiceLayerImpl implements ClassRosterServiceLayer {
 				|| student.getLastName() == null
 				|| student.getLastName().trim().length() == 0
 				|| student.getCohort() == null
-				|| student.getCohort().trim().length() == 0)
+				|| student.getCohort().trim().length() == 0
+				|| student.getStudentID() == null
+				|| student.getStudentID().trim().length() == 0)
 			
-			throw new ClassRosterDataValidationExcepion("A field [FirstName, LastName, Cohort] is missing.");
+			throw new ClassRosterDataValidationExcepion("A field [ID, FirstName, LastName, Cohort] is missing.");
+	}
+
+	@Override
+	public List<Student> retrieveStudentsByFirstName() throws ClassRosterPersistenceException {
+		List<Student> students = retrieveStudents();
+		return students.stream()
+				.sorted(CompareStudent.FIRST_NAME)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Student> retrieveStudentsByLastName() throws ClassRosterPersistenceException {
+		List<Student> students = retrieveStudents();
+		return students.stream()
+				.sorted(CompareStudent.LAST_NAME)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Student> retrieveStudentsByCohort() throws ClassRosterPersistenceException {
+		List<Student> students = retrieveStudents();
+		return students.stream()
+				.sorted(CompareStudent.COHORT)
+				.collect(Collectors.toList());
 	}
 
 }

@@ -20,6 +20,15 @@ public class ClassRosterView {
 		return io.readInt("Please select from the above choices (1-5): ", 1, 5);
 	}
 	
+	public int getListSelection() {
+		displayBanner("LIST BY");
+		io.print("1. First Name");
+		io.print("2. Last Name");
+		io.print("3. Cohort");
+		
+		return io.readInt("Please select from the above choices (1-3): ", 1, 3);
+	}
+	
 	public Student getNewStudentInfo() {
 		Student newStudent = new Student(io.readString("Enter Student ID: "));
 		newStudent.setFirstName(io.readString("Enter Student First Name: "));
