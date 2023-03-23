@@ -80,7 +80,7 @@ public class ClassRosterView {
 	
 	public void displayActionSuccess(String action) {
 		io.print(action);
-		io.readString("Click SPACE to continue.", "");
+		io.readString("Click ENTER to continue.", "");
 	}
 	
 }
