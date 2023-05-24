@@ -1,54 +1,40 @@
 package classroster.dto;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.*;
+
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Random;
 
-public class Student {
-	private String firstName, lastName;
-	private final String studentID;
+@Entity
+@Table(name = "students")
+public @Data class Student {
+
+	@Id
+	@Column(name = "student_id")
+	@Setter(AccessLevel.NONE)
+	private int studentID;
+
+	@Column(name = "first_name")
+	private String firstName;
+
+	@Column(name = "last_name")
+	private String lastName;
+
+	@Column(name = "cohort")
 	private String cohort;
 	
-	public Student(String id) {
+	public Student(int id) {
 		studentID = id;
-	}
-	
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getCohort() {
-		return cohort;
-	}
-
-	public void setCohort(String cohort) {
-		this.cohort = cohort;
-	}
-
-	public String getStudentID() {
-		return studentID;
 	}
 	
 	@Override
 	public String toString() {
 		return String.format("%s: %s, %s (%s)", studentID, lastName, firstName, cohort);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(cohort, firstName, lastName, studentID);
 	}
 
 	@Override
@@ -64,32 +50,27 @@ public class Student {
 				&& Objects.equals(lastName, other.lastName) && Objects.equals(studentID, other.studentID);
 	}
 
-	
+
+	// ONLY USED FOR FILE IMPLEMENTATION
 	public enum CompareStudent implements Comparator<Student> {
 		FIRST_NAME{
 			@Override
 			public int compare(Student s1, Student s2) {
-				return s1.firstName.compareTo(s2.firstName) > 0 ?
-						1 : s1.firstName.compareTo(s2.firstName) < 0 ?
-								-1 : 0;
+				return Integer.compare(s1.firstName.compareTo(s2.firstName), 0);
 			}
 		},
 		
 		LAST_NAME{
 			@Override
 			public int compare(Student s1, Student s2) {
-				return s1.lastName.compareTo(s2.lastName) > 0 ?
-						1 : s1.lastName.compareTo(s2.lastName) < 0 ?
-								-1 : 0;
+				return Integer.compare(s1.lastName.compareTo(s2.lastName), 0);
 			}
 		},
 		
 		COHORT{
 			@Override
 			public int compare(Student s1, Student s2) {
-				return s1.cohort.compareTo(s2.cohort) > 0 ?
-						1 : s1.cohort.compareTo(s2.cohort) < 0 ?
-								-1 : 0;
+				return Integer.compare(s1.cohort.compareTo(s2.cohort), 0);
 			}
 		}
 	}

@@ -1,11 +1,12 @@
 package classroster.controller;
 
+import classroster.service.ClassRosterDataValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import classroster.dao.*;
 import classroster.dto.Student;
-import classroster.service.ClassRosterDataValidationExcepion;
+import classroster.service.ClassRosterDataValidationException;
 import classroster.service.ClassRosterDuplicateIdException;
 import classroster.service.ClassRosterServiceLayer;
 import classroster.ui.ClassRosterView;
@@ -48,7 +49,7 @@ public class ClassRosterController {
 				service.createStudent(student);
 				view.displayActionSuccess("Create Student Performed.");
 				break;
-			} catch (ClassRosterDuplicateIdException | ClassRosterDataValidationExcepion e) {
+			} catch (ClassRosterDuplicateIdException | ClassRosterDataValidationException e) {
 			view.displayErrorMessage(e.getMessage());
 			}
 		} while (true);

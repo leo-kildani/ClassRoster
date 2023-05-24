@@ -58,7 +58,7 @@ public class ClassRosterDAOFileImpl implements ClassRosterDAO {
 
 	private Student unmarshalStudent(String studentInfo) {
 		String[] studentTokens = studentInfo.split(DELIMITER);
-		Student student = new Student(studentTokens[0]);
+		Student student = new Student(Integer.parseInt(studentTokens[0]));
 		student.setFirstName(studentTokens[1]);
 		student.setLastName(studentTokens[2]);
 		student.setCohort(studentTokens[3]);
@@ -73,7 +73,7 @@ public class ClassRosterDAOFileImpl implements ClassRosterDAO {
 		try (Scanner in = new Scanner(new ByteArrayInputStream(Files.readAllBytes(roster_file.toPath())))){
 			while (in.hasNextLine()) {
 				Student student = unmarshalStudent(in.nextLine());
-				studentRoster.put(student.getStudentID(), student);
+				studentRoster.put(String.valueOf(student.getStudentID()), student);
 			}
 		} catch (IOException e) {
 			throw new ClassRosterPersistenceException("Could not load roster data into memory.", e);

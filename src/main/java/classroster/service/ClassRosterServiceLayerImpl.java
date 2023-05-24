@@ -32,7 +32,7 @@ public class ClassRosterServiceLayerImpl implements ClassRosterServiceLayer {
 
 	@Override
 	public void createStudent(Student student)
-			throws ClassRosterDuplicateIdException, ClassRosterDataValidationExcepion, ClassRosterPersistenceException {
+			throws ClassRosterDuplicateIdException, ClassRosterDataValidationException, ClassRosterPersistenceException {
 		String id = student.getStudentID();
 		
 		// check id

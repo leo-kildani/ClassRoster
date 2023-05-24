@@ -12,7 +12,7 @@ import java.util.List;
 public interface ClassRosterServiceLayer {
 
 		public void createStudent(Student student) throws ClassRosterDuplicateIdException, 
-											ClassRosterDataValidationExcepion,
+											ClassRosterDataValidationException,
 													ClassRosterPersistenceException;
 		
 		public List<Student> retrieveStudents() throws ClassRosterPersistenceException;
