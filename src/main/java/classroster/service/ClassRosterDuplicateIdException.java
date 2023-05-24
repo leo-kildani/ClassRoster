@@ -5,6 +5,7 @@
 
 package classroster.service;
 
+@Deprecated
 public class ClassRosterDuplicateIdException extends Exception {
  
 		public ClassRosterDuplicateIdException(String msg) {

@@ -13,11 +13,9 @@ import java.util.Random;
 @Entity
 @Table(name = "students")
 public @Data class Student {
-
 	@Id
 	@Column(name = "student_id")
-	@Setter(AccessLevel.NONE)
-	private int studentID;
+	private Integer studentID;
 
 	@Column(name = "first_name")
 	private String firstName;
@@ -28,6 +26,11 @@ public @Data class Student {
 	@Column(name = "cohort")
 	private String cohort;
 	
+	public Student() {
+		studentID = generateID();
+	}
+
+	// FOR FILE IMPL
 	public Student(int id) {
 		studentID = id;
 	}
@@ -48,6 +51,11 @@ public @Data class Student {
 		Student other = (Student) obj;
 		return Objects.equals(cohort, other.cohort) && Objects.equals(firstName, other.firstName)
 				&& Objects.equals(lastName, other.lastName) && Objects.equals(studentID, other.studentID);
+	}
+
+	// generate random id between 1000-9999
+	public static int generateID(){
+		return (int)Math.floor(Math.random() * (9000) + 1000);
 	}
 
 

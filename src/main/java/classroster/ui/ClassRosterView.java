@@ -9,7 +9,7 @@ import classroster.dto.Student;
 
 @Component
 public class ClassRosterView {
-	private UserIO io;
+	private final UserIO io;
 	
 	@Autowired
 	public ClassRosterView(UserIO io) {
@@ -36,7 +36,7 @@ public class ClassRosterView {
 	}
 	
 	public Student getNewStudentInfo() {
-		Student newStudent = new Student(io.readString("Enter Student ID: "));
+		Student newStudent = new Student();
 		newStudent.setFirstName(io.readString("Enter Student First Name: "));
 		newStudent.setLastName(io.readString("Enter Student Last Name: "));
 		newStudent.setCohort(io.readString("Enter Student Cohort: "));
@@ -48,10 +48,6 @@ public class ClassRosterView {
 			io.print("XXXEMPTYXXX");
 		else
 			studentList.forEach(s -> io.print(s.toString()));
-	}
-	
-	public String getStudentID() {
-		return io.readString("Enter Student ID: ");
 	}
 	
 	public void displayStudentInfo(Student student) {
@@ -88,5 +84,8 @@ public class ClassRosterView {
 		io.print(action);
 		io.readString("Click ENTER to continue.", "");
 	}
-	
+
+	public Integer getStudentID() {
+		return io.readInt("Enter Student ID: ");
+	}
 }

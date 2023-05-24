@@ -18,7 +18,7 @@ import classroster.dto.Student;
 public class ClassRosterDAOFileImpl implements ClassRosterDAO {
 	private final File roster_file;
 	private static final String DELIMITER = "::";
-	private final Map<String, Student> studentRoster = new HashMap<>();
+	private final Map<Integer, Student> studentRoster = new HashMap<>();
 	
 	public ClassRosterDAOFileImpl() {
 		roster_file = new File("src\\main\\resources\\roster.txt");
@@ -29,11 +29,10 @@ public class ClassRosterDAOFileImpl implements ClassRosterDAO {
 	}
 	
 	@Override
-	public Student addStudent(String studentID,  Student student) throws ClassRosterPersistenceException {
+	public void addStudent(Student student) throws ClassRosterPersistenceException {
 		loadRoster();
-		Student stu = studentRoster.put(studentID, student);
+		Student stu = studentRoster.put(student.getStudentID(), student);
 		writeRoster();
-		return stu;
 	}
 
 	@Override
@@ -43,13 +42,13 @@ public class ClassRosterDAOFileImpl implements ClassRosterDAO {
 	}
 
 	@Override
-	public Student getStudent(String studentID) throws ClassRosterPersistenceException {
+	public Student getStudent(Integer studentID) throws ClassRosterPersistenceException {
 		loadRoster();
 		return studentRoster.get(studentID);
 	}
 
 	@Override
-	public Student removeStudent(String studentID) throws ClassRosterPersistenceException {
+	public Student removeStudent(Integer studentID) throws ClassRosterPersistenceException {
 		loadRoster();
 		Student stu = studentRoster.remove(studentID);
 		writeRoster();
@@ -73,7 +72,7 @@ public class ClassRosterDAOFileImpl implements ClassRosterDAO {
 		try (Scanner in = new Scanner(new ByteArrayInputStream(Files.readAllBytes(roster_file.toPath())))){
 			while (in.hasNextLine()) {
 				Student student = unmarshalStudent(in.nextLine());
-				studentRoster.put(String.valueOf(student.getStudentID()), student);
+				studentRoster.put(student.getStudentID(), student);
 			}
 		} catch (IOException e) {
 			throw new ClassRosterPersistenceException("Could not load roster data into memory.", e);

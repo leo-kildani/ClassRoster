@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import classroster.dao.ClassRosterAuditDAO;
@@ -25,25 +26,28 @@ public class ClassRosterServiceLayerImpl implements ClassRosterServiceLayer {
 	private final ClassRosterAuditDAO auditLog;
 	
 	@Autowired
-	public ClassRosterServiceLayerImpl(ClassRosterDAO dao, ClassRosterAuditDAO auditLog) {
+	public ClassRosterServiceLayerImpl(@Qualifier("classRosterDAODatabaseImpl") ClassRosterDAO dao, ClassRosterAuditDAO auditLog) {
 		this.dao = dao;
 		this.auditLog = auditLog;
 	}
 
 	@Override
-	public void createStudent(Student student)
-			throws ClassRosterDuplicateIdException, ClassRosterDataValidationException, ClassRosterPersistenceException {
-		String id = student.getStudentID();
-		
-		// check id
-		if (dao.getStudent(id) != null)
-			throw new ClassRosterDuplicateIdException("Student with ID [" + id + "] exists.");
+	public void createStudent(Student student) throws ClassRosterDataValidationException,
+			ClassRosterPersistenceException, ClassRosterDatabaseOverfillException {
+
+		int id = student.getStudentID();
+
+		validateDbSize();
+
+		// assure no duplicate id
+		while (dao.getStudent(id) != null)
+			student.setStudentID(Student.generateID());
 		
 		// validate data
 		validateStudentData(student);
 		
 		// add student
-		dao.addStudent(id, student);
+		dao.addStudent(student);
 		auditLog.writeAuditEntry("Student " + id + " CREATED");
 	}
 
@@ -53,29 +57,34 @@ public class ClassRosterServiceLayerImpl implements ClassRosterServiceLayer {
 	}
 
 	@Override
-	public Student retrieveStudent(String id) throws ClassRosterPersistenceException {
-		return dao.getStudent(id);
+	public Student retrieveStudent(int studentId) throws ClassRosterPersistenceException {
+		return dao.getStudent(studentId);
 	}
 
 	@Override
-	public Student removeStudent(String id) throws ClassRosterPersistenceException {
-		Student stu = dao.removeStudent(id);
-		auditLog.writeAuditEntry("Student " + id + " REMOVED");
+	public Student removeStudent(int studentId) throws ClassRosterPersistenceException {
+		Student stu = dao.removeStudent(studentId);
+		auditLog.writeAuditEntry("Student " + studentId + " REMOVED");
 		return stu;
-		
 	}
 	
-	private void validateStudentData(Student student) throws ClassRosterDataValidationExcepion{
+	private void validateStudentData(Student student) throws ClassRosterDataValidationException{
 		if (student.getFirstName() == null
 				|| student.getFirstName().trim().length() == 0
 				|| student.getLastName() == null
 				|| student.getLastName().trim().length() == 0
 				|| student.getCohort() == null
 				|| student.getCohort().trim().length() == 0
-				|| student.getStudentID() == null
-				|| student.getStudentID().trim().length() == 0)
+		)
 			
-			throw new ClassRosterDataValidationExcepion("A field [ID, FirstName, LastName, Cohort] is missing.");
+			throw new ClassRosterDataValidationException("A field [ID, FirstName, LastName, Cohort] is missing.");
+	}
+
+	// Max Database Size (8999)
+	private void validateDbSize() throws ClassRosterDatabaseOverfillException, ClassRosterPersistenceException {
+		int size = dao.getAllStudents().size();
+		if (size > 8999)
+			throw new ClassRosterDatabaseOverfillException("Maximum Database Size Exceeded.");
 	}
 
 	@Override
