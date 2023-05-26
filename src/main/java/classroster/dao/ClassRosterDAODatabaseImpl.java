@@ -1,6 +1,7 @@
 package classroster.dao;
 
 import classroster.dto.Student;
+import classroster.repository.StudentRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -13,40 +14,39 @@ import java.util.List;
 @Component
 public class ClassRosterDAODatabaseImpl implements ClassRosterDAO{
 
-    private final EntityManager entityManager;
+    private final StudentRepository studentRepo;
 
     @Autowired
-    public ClassRosterDAODatabaseImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public ClassRosterDAODatabaseImpl(StudentRepository repo) {
+        this.studentRepo = repo;
     }
 
     @Override
     @Transactional
     public void addStudent(Student student) throws ClassRosterPersistenceException {
         try {
-            entityManager.persist(student);
-        } catch (EntityExistsException | IllegalArgumentException e) {
+            studentRepo.save(student);
+        } catch (EntityExistsException e) {
             throw new ClassRosterPersistenceException("Could Not Persist Information");
         }
     }
 
     @Override
     public List<Student> getAllStudents() throws ClassRosterPersistenceException {
-        TypedQuery<Student> query = entityManager.createQuery("from Student", Student.class);
-        return query.getResultList();
+        return studentRepo.findAll();
     }
 
     @Override
     public Student getStudent(Integer studentID) throws ClassRosterPersistenceException {
-        return entityManager.find(Student.class, studentID);
+        return studentRepo.findById(studentID.toString()).orElse(null);
     }
 
     @Override
     @Transactional
     public Student removeStudent(Integer studentID) throws ClassRosterPersistenceException {
-        Student studentToRemove = getStudent(studentID);
-        if (studentToRemove != null)
-            entityManager.remove(studentToRemove);
-        return studentToRemove;
+        Student toRemove = getStudent(studentID);
+        if (toRemove != null)
+            studentRepo.deleteById(studentID.toString());
+        return toRemove;
     }
 }

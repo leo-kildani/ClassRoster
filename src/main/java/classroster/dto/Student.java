@@ -58,8 +58,6 @@ public @Data class Student {
 		return (int)Math.floor(Math.random() * (9000) + 1000);
 	}
 
-
-	// ONLY USED FOR FILE IMPLEMENTATION
 	public enum CompareStudent implements Comparator<Student> {
 		FIRST_NAME{
 			@Override

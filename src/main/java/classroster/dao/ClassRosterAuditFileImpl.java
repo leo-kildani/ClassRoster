@@ -34,7 +34,7 @@ public class ClassRosterAuditFileImpl implements ClassRosterAuditDAO {
 		
 		try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(auditLog, true)))){
 			timestamp = LocalDateTime.now();
-			out.println(entry + " : " + timestamp);
+			out.println(entry + " | " + timestamp);
 		} catch (IOException e) {
 			throw new ClassRosterPersistenceException("Could not persist information.", e);
 		}

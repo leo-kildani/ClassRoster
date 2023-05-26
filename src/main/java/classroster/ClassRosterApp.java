@@ -17,7 +17,7 @@ public class ClassRosterApp {
 
 	@Bean
 	@Autowired
-	public CommandLineRunner commandLineRunner(ClassRosterController controller){
+	public CommandLineRunner commandLineRunner(ClassRosterController controller) {
 		return runner -> controller.run();
 	}
 }

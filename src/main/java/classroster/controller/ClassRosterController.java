@@ -47,8 +47,11 @@ public class ClassRosterController {
 				service.createStudent(student);
 				view.displayActionSuccess("Create Student Performed.");
 				break;
-			} catch (ClassRosterDataValidationException | ClassRosterDatabaseOverfillException e) {
+			} catch (ClassRosterDataValidationException e) {
 			view.displayErrorMessage(e.getMessage());
+			} catch (ClassRosterDatabaseOverfillException e) {
+				view.displayErrorMessage(e.getMessage());
+				break;
 			}
 		} while (true);
 	}

@@ -68,7 +68,7 @@ public class ClassRosterServiceLayerImpl implements ClassRosterServiceLayer {
 		return stu;
 	}
 	
-	private void validateStudentData(Student student) throws ClassRosterDataValidationException{
+	private void validateStudentData(Student student) throws ClassRosterDataValidationException {
 		if (student.getFirstName() == null
 				|| student.getFirstName().trim().length() == 0
 				|| student.getLastName() == null
