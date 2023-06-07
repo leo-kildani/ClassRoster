@@ -1,6 +1,6 @@
 package classroster;
 
-import classroster.controller.ClassRosterController;
+import classroster.controller.ClassRosterCommandLineController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,7 +17,7 @@ public class ClassRosterApp {
 
 	@Bean
 	@Autowired
-	public CommandLineRunner commandLineRunner(ClassRosterController controller) {
+	public CommandLineRunner commandLineRunner(ClassRosterCommandLineController controller) {
 		return runner -> controller.run();
 	}
 }

@@ -3,8 +3,6 @@ package classroster.dao;
 import classroster.dto.Student;
 import classroster.repository.StudentRepository;
 import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

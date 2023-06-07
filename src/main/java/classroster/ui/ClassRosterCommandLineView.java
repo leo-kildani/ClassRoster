@@ -8,11 +8,11 @@ import org.springframework.stereotype.Component;
 import classroster.dto.Student;
 
 @Component
-public class ClassRosterView {
+public class ClassRosterCommandLineView {
 	private final UserIO io;
 	
 	@Autowired
-	public ClassRosterView(UserIO io) {
+	public ClassRosterCommandLineView(UserIO io) {
 		this.io = io;
 	}
 	

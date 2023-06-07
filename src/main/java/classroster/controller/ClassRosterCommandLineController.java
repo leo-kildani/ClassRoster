@@ -7,38 +7,38 @@ import org.springframework.stereotype.Component;
 import classroster.dao.*;
 import classroster.dto.Student;
 import classroster.service.ClassRosterDataValidationException;
-import classroster.ui.ClassRosterView;
+import classroster.ui.ClassRosterCommandLineView;
 
 @Component
-public class ClassRosterController {
-	private final ClassRosterView view;
+public class ClassRosterCommandLineController {
+	private final ClassRosterCommandLineView view;
 	private final ClassRosterServiceLayer service;
 	
 	@Autowired
-	public ClassRosterController(ClassRosterView view, ClassRosterServiceLayer service) {
+	public ClassRosterCommandLineController(ClassRosterCommandLineView view, ClassRosterServiceLayer service) {
 		this.view = view;
 		this.service = service;
 	}
-	
-	private void exit() {
+
+	public void exit() {
 		view.displayExitMessage();
 	}
 	
-	private void viewStudent() throws ClassRosterPersistenceException {
+	public void viewStudent() throws ClassRosterPersistenceException {
 		view.displayBanner("VIEW STUDENT");
 		Student student = service.retrieveStudent(view.getStudentID());
 		view.displayStudentInfo(student);
 		view.displayActionSuccess("View Student Performed.");
 	}
 	
-	private void removeStudent() throws ClassRosterPersistenceException {
+	public void removeStudent() throws ClassRosterPersistenceException {
 		view.displayBanner("REMOVE STUDENT");
 		Student student = service.removeStudent(view.getStudentID());
 		view.displayRemoveStudent(student);
 		view.displayActionSuccess("Remove Student Performed.");
 	}
 	
-	private void createStudent() throws ClassRosterPersistenceException {
+	public void createStudent() throws ClassRosterPersistenceException {
 		view.displayBanner("CREATE STUDENT");
 		
 		do {
@@ -56,7 +56,7 @@ public class ClassRosterController {
 		} while (true);
 	}
 	
-	private void listStudents() throws ClassRosterPersistenceException {
+	public void listStudents() throws ClassRosterPersistenceException {
 		int input = view.getListSelection();
 		view.displayBanner("Student List");
 		switch (input) {
