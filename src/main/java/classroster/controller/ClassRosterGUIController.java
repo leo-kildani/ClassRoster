@@ -7,8 +7,8 @@ import classroster.service.ClassRosterDatabaseOverfillException;
 import classroster.service.ClassRosterServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +24,11 @@ public class ClassRosterGUIController{
     }
 
     public void run() {
-        new GUI();
+        try {
+            new GUI();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     /*
@@ -37,21 +41,31 @@ public class ClassRosterGUIController{
         private JPanel mainPanel, headerPanel, actionPanel, studentPanel;
         private JLabel title;
         private JButton addButton, removeButton;
+        private JTable studentTable;
+        private JScrollPane studentPane;
+        private DefaultTableModel studentTableModel;
 
-        public GUI() {
+
+        public GUI() throws ClassRosterPersistenceException {
             // CONSTANTS
             final Color MAIN_BG = new Color(206, 212, 218);
             final Color SUB_BG = new Color(108, 117, 125);
             final Color TEXT_COLOR = new Color(33, 37, 41);
+            final String[] STUDENT_TABLE_COLUMN_HEADERS = {"ID", "First Name", "Last Name", "Cohort"};
+            final Object[][] STUDENT_DATA = service.retrieveStudents()
+                    .stream()
+                    .map(Student::toArray)
+                    .toArray(Object[][]::new);
 
             // MAIN CONTAINER
             frame = new JFrame("Class Roster Program");
             frame.setIconImage(new ImageIcon("src\\main\\resources\\images\\classrosterlogo.png").getImage());
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(750, 750);
+            frame.setSize(750, 500);
             frame.setBackground(MAIN_BG);
+            frame.setResizable(false);
             frame.setLocationRelativeTo(null);
-            mainPanel = new JPanel(new BorderLayout(10, 10));
+            mainPanel = new JPanel(new BorderLayout(10, 10)); // set content pane to custom JPanel
             mainPanel.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
             mainPanel.setBackground(MAIN_BG);
             mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -100,9 +114,22 @@ public class ClassRosterGUIController{
             removeButton.addActionListener(this);
 
             // STUDENT PANEL
-            studentPanel = new JPanel();
+            studentPanel = new JPanel(new BorderLayout());
             studentPanel.setPreferredSize(new Dimension(450, 500));
             studentPanel.setBackground(SUB_BG);
+            studentTableModel = new DefaultTableModel(STUDENT_DATA, STUDENT_TABLE_COLUMN_HEADERS) {
+                @Override
+                public boolean isCellEditable(int row, int col) {
+                    return false;
+                }
+            };
+            studentTable = new JTable(studentTableModel);
+            studentTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            studentTable.getTableHeader().setReorderingAllowed(false);
+            studentTable.getTableHeader().setResizingAllowed(false);
+            studentPane = new JScrollPane(studentTable);
+            studentPane.setPreferredSize(new Dimension(450, 500));
+            studentPanel.add(studentPane, BorderLayout.CENTER);
 
             // FINAL COMPONENTS STAGE
             frame.add(headerPanel, BorderLayout.NORTH);
@@ -113,13 +140,23 @@ public class ClassRosterGUIController{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
             if (e.getSource() == removeButton) {
-                try {
-                    service.removeStudent(Integer.parseInt(JOptionPane.showInputDialog(frame, "Enter Student ID.")));
-                } catch (ClassRosterPersistenceException ex) {
-                    throw new RuntimeException(ex);
-                }
+                int idxToDelete = studentTable.getSelectedRow();
+                String studentID = String.valueOf(studentTable.getValueAt(idxToDelete, 0));
+                int checkDelete = JOptionPane.showConfirmDialog(frame,
+                        "Are you sure you want to delete this student?",
+                        "Confirm Delete",
+                        JOptionPane.YES_NO_OPTION);
+                if (checkDelete == 0)
+                    try {
+                        studentTableModel.removeRow(idxToDelete);
+                        service.removeStudent(Integer.parseInt(studentID));
+                    } catch (ClassRosterPersistenceException ex) {
+                        JOptionPane.showMessageDialog(frame,
+                                ex.getMessage(),
+                                "ERROR",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
             }
 
             if (e.getSource() == addButton) {
@@ -141,9 +178,12 @@ public class ClassRosterGUIController{
                     newStu.setCohort(studentTokens[2]);
                     try{
                         service.createStudent(newStu);
+                        studentTableModel.addRow(newStu.toArray());
                     } catch (ClassRosterDatabaseOverfillException | ClassRosterPersistenceException |
                              ClassRosterDataValidationException ex) {
-                        throw new RuntimeException(ex);
+                        JOptionPane.showMessageDialog(frame,
+                                ex.getMessage(), "ERROR",
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }

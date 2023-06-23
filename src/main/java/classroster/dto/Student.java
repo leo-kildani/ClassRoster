@@ -40,6 +40,15 @@ public @Data class Student {
 		return String.format("%s: %s, %s (%s)", studentID, lastName, firstName, cohort);
 	}
 
+	public String[] toArray() {
+		return new String[] {
+				String.valueOf(studentID),
+				firstName,
+				lastName,
+				cohort
+		};
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
