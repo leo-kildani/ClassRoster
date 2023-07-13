@@ -45,7 +45,6 @@ public class ClassRosterGUIController{
         private JScrollPane studentPane;
         private DefaultTableModel studentTableModel;
 
-
         public GUI() throws ClassRosterPersistenceException {
             // CONSTANTS
             final Color MAIN_BG = new Color(206, 212, 218);
@@ -93,20 +92,22 @@ public class ClassRosterGUIController{
             addButton = new JButton("Add Student", new ImageIcon("src\\main\\resources\\images\\addicon.png"));
             addButton.setFocusable(false);
             addButton.setBackground(SUB_BG);
-            addButton.setBounds(25, 50, 200, 75);
+            addButton.setBounds(50, 50, 150, 75);
             addButton.setFont(new Font("Times New Roman", Font.PLAIN, 15));
             addButton.setForeground(TEXT_COLOR);
-            addButton.setHorizontalTextPosition(JButton.RIGHT);
-            addButton.setVerticalTextPosition(JButton.CENTER);
+            addButton.setHorizontalTextPosition(JButton.CENTER);
+            addButton.setVerticalTextPosition(JButton.BOTTOM);
 
             removeButton = new JButton("Remove Student", new ImageIcon("src\\main\\resources\\images\\minusicon.png"));
             removeButton.setFocusable(false);
             removeButton.setBackground(SUB_BG);
-            removeButton.setBounds(25, 150, 200, 75);
+            removeButton.setBounds(50, 150, 125, 75);
             removeButton.setFont(new Font("Times New Roman", Font.PLAIN, 15));
             removeButton.setForeground(TEXT_COLOR);
-            removeButton.setHorizontalTextPosition(JButton.RIGHT);
-            removeButton.setVerticalTextPosition(JButton.CENTER);
+            removeButton.setHorizontalTextPosition(JButton.CENTER);
+            removeButton.setVerticalTextPosition(JButton.BOTTOM);
+
+
 
             actionPanel.add(addButton);
             addButton.addActionListener(this);
@@ -127,6 +128,7 @@ public class ClassRosterGUIController{
             studentTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             studentTable.getTableHeader().setReorderingAllowed(false);
             studentTable.getTableHeader().setResizingAllowed(false);
+            studentTable.setAutoCreateRowSorter(true);
             studentPane = new JScrollPane(studentTable);
             studentPane.setPreferredSize(new Dimension(450, 500));
             studentPanel.add(studentPane, BorderLayout.CENTER);
