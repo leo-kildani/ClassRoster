@@ -1,12 +1,11 @@
 package classroster.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 
 @Entity
 @Table(name = "assignments")
@@ -23,11 +22,10 @@ public @Data class Assignment {
     private String name;
 
     @Column(name = "due_date")
+    @Temporal(TemporalType.DATE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd", timezone = "UTC")
     @Setter(AccessLevel.NONE)
     private Date dueDate;
-
-    @Getter(AccessLevel.NONE)
-    private final DateTimeFormatter dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
 
     public Assignment(int maxScore, String name, LocalDate dueDate) {
         this.maxScore = maxScore;
@@ -35,8 +33,8 @@ public @Data class Assignment {
         this.dueDate = Date.valueOf(dueDate);
     }
 
-    public void setDueDate(LocalDate date) {
-        dueDate = Date.valueOf(date);
+    public void setDueDate(int year, int month, int dayOfMonth) {
+        dueDate = Date.valueOf(LocalDate.of(year, month, dayOfMonth));
     }
 
 }

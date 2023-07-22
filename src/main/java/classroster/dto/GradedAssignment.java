@@ -1,11 +1,10 @@
 package classroster.dto;
 
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
-
 import java.sql.Date;
 
 @Entity
@@ -30,6 +29,7 @@ public @Data class GradedAssignment {
 
     @Column(name = "due_date")
     @Temporal(TemporalType.DATE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd", timezone = "UTC")
     @Setter(AccessLevel.NONE)
     private Date dueDate;
 
@@ -41,9 +41,10 @@ public @Data class GradedAssignment {
     private double receivedScore;
 
     public GradedAssignment(Assignment assignment, int studentID, double receivedScore) {
-        this.gradedAssignmentID = assignment.getAssignmentID();
+        this.assignmentID = assignment.getAssignmentID();
         this.dueDate = assignment.getDueDate();
         this.name = assignment.getName();
+        this.maxScore = assignment.getMaxScore();
         this.studentID = studentID;
         this.receivedScore = receivedScore;
     }
