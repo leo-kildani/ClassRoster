@@ -110,5 +110,4 @@ public class ClassRosterServiceLayerImpl implements ClassRosterServiceLayer {
 				.sorted(CompareStudent.COHORT)
 				.collect(Collectors.toList());
 	}
-
 }

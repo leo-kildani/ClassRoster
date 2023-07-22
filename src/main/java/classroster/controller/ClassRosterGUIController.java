@@ -101,13 +101,11 @@ public class ClassRosterGUIController{
             removeButton = new JButton("Remove Student", new ImageIcon("src\\main\\resources\\images\\minusicon.png"));
             removeButton.setFocusable(false);
             removeButton.setBackground(SUB_BG);
-            removeButton.setBounds(50, 150, 125, 75);
+            removeButton.setBounds(50, 150, 150, 75);
             removeButton.setFont(new Font("Times New Roman", Font.PLAIN, 15));
             removeButton.setForeground(TEXT_COLOR);
             removeButton.setHorizontalTextPosition(JButton.CENTER);
             removeButton.setVerticalTextPosition(JButton.BOTTOM);
-
-
 
             actionPanel.add(addButton);
             addButton.addActionListener(this);

@@ -24,13 +24,3 @@ public class ClassRosterApp {
 		return runner -> controller.run();
 	}
 }
-
-/*
-AnnotationConfigApplicationContext appContext = new AnnotationConfigApplicationContext();
-		appContext.scan("classroster");
-		appContext.refresh();
-
-		ClassRosterController controller = appContext.getBean("classRosterController", ClassRosterController.class);
-		controller.run();
-		appContext.close();
- */
