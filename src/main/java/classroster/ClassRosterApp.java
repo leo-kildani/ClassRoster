@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 public class ClassRosterApp {
-	public static void main(String[] args) {
+	public static void main(String[] args) { 
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(ClassRosterApp.class);
 		builder.headless(false);
 		ConfigurableApplicationContext ctx = builder.run();
