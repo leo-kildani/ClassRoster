@@ -36,7 +36,7 @@ public class ClassRosterDAODatabaseImpl implements ClassRosterDAO{
 
     @Override
     public Student getStudent(Integer studentID) throws ClassRosterPersistenceException {
-        return studentRepo.findById(studentID.toString()).orElse(null);
+        return studentRepo.findById(studentID).orElse(null);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ClassRosterDAODatabaseImpl implements ClassRosterDAO{
     public Student removeStudent(Integer studentID) throws ClassRosterPersistenceException {
         Student toRemove = getStudent(studentID);
         if (toRemove != null)
-            studentRepo.deleteById(studentID.toString());
+            studentRepo.deleteById(studentID);
         return toRemove;
     }
 }
