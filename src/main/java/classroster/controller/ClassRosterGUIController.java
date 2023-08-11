@@ -1,6 +1,7 @@
 package classroster.controller;
 
 import classroster.dao.ClassRosterPersistenceException;
+import classroster.dto.Assignment;
 import classroster.dto.Student;
 import classroster.service.ClassRosterDataValidationException;
 import classroster.service.ClassRosterDatabaseOverfillException;
@@ -12,6 +13,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.time.LocalDate;
 
 @Component
 public class ClassRosterGUIController{
@@ -38,12 +41,15 @@ public class ClassRosterGUIController{
     private class GUI implements ActionListener {
         // COMPONENTS
         private JFrame frame;
-        private JPanel mainPanel, headerPanel, actionPanel, studentPanel;
+        private JPanel mainPanel, headerPanel, actionPanel, entityPanel;
         private JLabel title;
-        private JButton addButton, removeButton;
-        private JTable studentTable;
-        private JScrollPane studentPane;
-        private DefaultTableModel studentTableModel;
+        private JButton addButton, removeButton, changeViewButton;
+        private JTable studentTable, assignmentTable;
+        private JScrollPane studentPane, assignmentPane;
+        private DefaultTableModel studentTableModel, assignmentTableModel;
+
+        // flags
+        private boolean studentView = true;  // student view is default
 
         public GUI() throws ClassRosterPersistenceException {
             // CONSTANTS
@@ -54,6 +60,12 @@ public class ClassRosterGUIController{
             final Object[][] STUDENT_DATA = service.retrieveStudents()
                     .stream()
                     .map(Student::toArray)
+                    .toArray(Object[][]::new);
+
+            final String[] ASSIGNMENT_TABLE_COLUMN_HEADERS = {"ID", "Max Score", "Due Date", "Title"};
+            final Object[][] ASSIGNMENT_DATA = service.retrieveAssignments()
+                    .stream()
+                    .map(Assignment::toArray)
                     .toArray(Object[][]::new);
 
             // MAIN CONTAINER
@@ -85,14 +97,13 @@ public class ClassRosterGUIController{
             headerPanel.add(title);
 
             // ACTIONS CONTAINER
-            actionPanel = new JPanel(null);
+            actionPanel = new JPanel(new GridLayout(3, 1, 25, 25));
             actionPanel.setPreferredSize(new Dimension(250, 500));
             actionPanel.setBackground(SUB_BG);
 
-            addButton = new JButton("Add Student", new ImageIcon("src\\main\\resources\\images\\addicon.png"));
+            addButton = new JButton("Create Student", new ImageIcon("src\\main\\resources\\images\\addicon.png"));
             addButton.setFocusable(false);
             addButton.setBackground(SUB_BG);
-            addButton.setBounds(50, 50, 150, 75);
             addButton.setFont(new Font("Times New Roman", Font.PLAIN, 15));
             addButton.setForeground(TEXT_COLOR);
             addButton.setHorizontalTextPosition(JButton.CENTER);
@@ -101,91 +112,146 @@ public class ClassRosterGUIController{
             removeButton = new JButton("Remove Student", new ImageIcon("src\\main\\resources\\images\\minusicon.png"));
             removeButton.setFocusable(false);
             removeButton.setBackground(SUB_BG);
-            removeButton.setBounds(50, 150, 150, 75);
             removeButton.setFont(new Font("Times New Roman", Font.PLAIN, 15));
             removeButton.setForeground(TEXT_COLOR);
             removeButton.setHorizontalTextPosition(JButton.CENTER);
             removeButton.setVerticalTextPosition(JButton.BOTTOM);
 
+            changeViewButton = new JButton("View Assignments");
+            changeViewButton.setFocusable(false);
+            changeViewButton.setBackground(SUB_BG);
+            changeViewButton.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+            changeViewButton.setForeground(TEXT_COLOR);
+            changeViewButton.setHorizontalTextPosition(JButton.CENTER);
+
             actionPanel.add(addButton);
             addButton.addActionListener(this);
             actionPanel.add(removeButton);
             removeButton.addActionListener(this);
+            actionPanel.add(changeViewButton);
+            changeViewButton.addActionListener(this);
 
             // STUDENT PANEL
-            studentPanel = new JPanel(new BorderLayout());
-            studentPanel.setPreferredSize(new Dimension(450, 500));
-            studentPanel.setBackground(SUB_BG);
+            entityPanel = new JPanel(new GridLayout(1, 1));
+            entityPanel.setPreferredSize(new Dimension(450, 500));
+            entityPanel.setBackground(SUB_BG);
             studentTableModel = new DefaultTableModel(STUDENT_DATA, STUDENT_TABLE_COLUMN_HEADERS) {
                 @Override
                 public boolean isCellEditable(int row, int col) {
                     return false;
                 }
             };
+            assignmentTableModel = new DefaultTableModel(ASSIGNMENT_DATA, ASSIGNMENT_TABLE_COLUMN_HEADERS) {
+                @Override
+                public boolean isCellEditable(int row, int col) {
+                    return false;
+                }
+            };
+
             studentTable = new JTable(studentTableModel);
             studentTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             studentTable.getTableHeader().setReorderingAllowed(false);
             studentTable.getTableHeader().setResizingAllowed(false);
             studentTable.setAutoCreateRowSorter(true);
             studentPane = new JScrollPane(studentTable);
-            studentPane.setPreferredSize(new Dimension(450, 500));
-            studentPanel.add(studentPane, BorderLayout.CENTER);
+
+            assignmentTable = new JTable(assignmentTableModel);
+            assignmentTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            assignmentTable.getTableHeader().setReorderingAllowed(false);
+            assignmentTable.getTableHeader().setResizingAllowed(false);
+            assignmentTable.setAutoCreateRowSorter(true);
+            assignmentPane = new JScrollPane(assignmentTable);
+
+            entityPanel.add(studentPane);
 
             // FINAL COMPONENTS STAGE
             frame.add(headerPanel, BorderLayout.NORTH);
             frame.add(actionPanel, BorderLayout.EAST);
-            frame.add(studentPanel, BorderLayout.WEST);
+            frame.add(entityPanel, BorderLayout.WEST);
             frame.setVisible(true);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == removeButton) {
-                int idxToDelete = studentTable.getSelectedRow();
-                String studentID = String.valueOf(studentTable.getValueAt(idxToDelete, 0));
-                int checkDelete = JOptionPane.showConfirmDialog(frame,
-                        "Are you sure you want to delete this student?",
-                        "Confirm Delete",
-                        JOptionPane.YES_NO_OPTION);
-                if (checkDelete == 0)
-                    try {
-                        studentTableModel.removeRow(idxToDelete);
-                        service.removeStudent(Integer.parseInt(studentID));
-                    } catch (ClassRosterPersistenceException ex) {
-                        JOptionPane.showMessageDialog(frame,
-                                ex.getMessage(),
-                                "ERROR",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-            }
 
             if (e.getSource() == addButton) {
-                String[] studentTokens = new String[3];  // {firstName, lastName, cohort}
-                studentTokens[0] = JOptionPane.showInputDialog(frame, "Enter First Name.");
-                studentTokens[1] = JOptionPane.showInputDialog(frame, "Enter Last Name.");
-                studentTokens[2] = JOptionPane.showInputDialog(frame, "Enter Cohort");
+                if (studentView) {
+                    String[] studentTokens = new String[3];  // {firstName, lastName, cohort}
+                    studentTokens[0] = JOptionPane.showInputDialog(frame, "Enter First Name.");
+                    studentTokens[1] = JOptionPane.showInputDialog(frame, "Enter Last Name.");
+                    studentTokens[2] = JOptionPane.showInputDialog(frame, "Enter Cohort");
 
-                int checkData = JOptionPane.showConfirmDialog(frame, "Is the following information correct?\n" +
-                                "First Name: " + studentTokens[0] + "\n" +
-                                "Last Name: " + studentTokens[1] + "\n" +
-                                "Cohort: " + studentTokens[2],
-                        "Information Check",
-                        JOptionPane.YES_NO_OPTION);
-                if (checkData == 0) {
-                    Student newStu = new Student();
-                    newStu.setFirstName(studentTokens[0]);
-                    newStu.setLastName(studentTokens[1]);
-                    newStu.setCohort(studentTokens[2]);
-                    try{
-                        service.createStudent(newStu);
-                        studentTableModel.addRow(newStu.toArray());
-                    } catch (ClassRosterDatabaseOverfillException | ClassRosterPersistenceException |
-                             ClassRosterDataValidationException ex) {
-                        JOptionPane.showMessageDialog(frame,
-                                ex.getMessage(), "ERROR",
-                                JOptionPane.ERROR_MESSAGE);
+                    int checkData = JOptionPane.showConfirmDialog(frame, "Is the following information correct?\n" +
+                                    "First Name: " + studentTokens[0] + "\n" +
+                                    "Last Name: " + studentTokens[1] + "\n" +
+                                    "Cohort: " + studentTokens[2],
+                            "Information Check",
+                            JOptionPane.YES_NO_OPTION);
+                    if (checkData == 0) {
+                        Student newStu = new Student();
+                        newStu.setFirstName(studentTokens[0]);
+                        newStu.setLastName(studentTokens[1]);
+                        newStu.setCohort(studentTokens[2]);
+                        try{
+                            service.createStudent(newStu);
+                            studentTableModel.addRow(newStu.toArray());
+                        } catch (ClassRosterDatabaseOverfillException | ClassRosterPersistenceException |
+                                 ClassRosterDataValidationException ex) {
+                            JOptionPane.showMessageDialog(frame,
+                                    ex.getMessage(), "ERROR",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                } else {
+                    Assignment assignmentToAdd = new Assignment();
+                    try {
+                        assignmentToAdd.setMaxScore(Integer.parseInt(
+                                        JOptionPane.showInputDialog(frame, "Enter Max Score:")
+                                )
+                        );
+                        assignmentToAdd.setTitle(JOptionPane.showInputDialog(frame, "Enter Assignment Title:"));
+                        assignmentToAdd.setDueDate(
+                                Date.valueOf(LocalDate.parse(JOptionPane.showInputDialog(frame, "Enter Due Date: (YYYY-MM-DD)"))));
+                        service.createAssignment(assignmentToAdd);
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(frame, "A field was incorrect.", "Error", JOptionPane.ERROR_MESSAGE);
+                        throw new RuntimeException(ex.getMessage());
                     }
                 }
+            }
+            if (e.getSource() == removeButton) {
+                if (studentView) {
+                    int idxToDelete = studentTable.getSelectedRow();
+                    String studentID = String.valueOf(studentTable.getValueAt(idxToDelete, 0));
+                    int checkDelete = JOptionPane.showConfirmDialog(frame,
+                            "Are you sure you want to delete this student?",
+                            "Confirm Delete",
+                            JOptionPane.YES_NO_OPTION);
+                    if (checkDelete == 0) {
+                        try {
+                            studentTableModel.removeRow(idxToDelete);
+                            service.removeStudent(Integer.parseInt(studentID));
+                        } catch (ClassRosterPersistenceException ex) {
+                            JOptionPane.showMessageDialog(frame,
+                                    ex.getMessage(),
+                                    "ERROR",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            }
+            if (e.getSource() == changeViewButton) {
+                studentView = !studentView;
+                if (studentView) {
+                    entityPanel.remove(assignmentPane );
+                    entityPanel.add(studentPane);
+                } else {
+                    entityPanel.remove(studentPane);
+                    entityPanel.add(assignmentPane);
+                }
+                addButton.setText(studentView ? "Add Student" : "Add Assignment");
+                removeButton.setText(studentView ? "Remove Student" : "Remove Assignment");
+                changeViewButton.setText(studentView ? "View Assignments" : "View Students");
             }
         }
     }
