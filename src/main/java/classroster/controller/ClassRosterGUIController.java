@@ -39,23 +39,26 @@ public class ClassRosterGUIController{
     due to tight coupling between GUI and Service
      */
     private class GUI implements ActionListener {
+        public static final int WIDTH = 750;
+        public static final int HEIGHT = 500;
+        public final static Color MAIN_BG = new Color(206, 212, 218);
+        public final static Color SUB_BG = new Color(108, 117, 125);
+        public final static Color TEXT_COLOR = new Color(33, 37, 41);
+
         // COMPONENTS
-        private JFrame frame;
-        private JPanel mainPanel, headerPanel, actionPanel, entityPanel;
-        private JLabel title;
-        private JButton addButton, removeButton, changeViewButton;
-        private JTable studentTable, assignmentTable;
-        private JScrollPane studentPane, assignmentPane;
-        private DefaultTableModel studentTableModel, assignmentTableModel;
+        public JFrame frame;
+        public JPanel mainPanel, headerPanel, actionPanel, entityPanel;
+        public JLabel title;
+        public JButton addButton, removeButton, changeViewButton, gradeAssignmentButton;
+        public JTable studentTable, assignmentTable;
+        public JScrollPane studentPane, assignmentPane;
+        public DefaultTableModel studentTableModel, assignmentTableModel;
 
         // flags
         private boolean studentView = true;  // student view is default
 
         public GUI() throws ClassRosterPersistenceException {
             // CONSTANTS
-            final Color MAIN_BG = new Color(206, 212, 218);
-            final Color SUB_BG = new Color(108, 117, 125);
-            final Color TEXT_COLOR = new Color(33, 37, 41);
             final String[] STUDENT_TABLE_COLUMN_HEADERS = {"ID", "First Name", "Last Name", "Cohort"};
             final Object[][] STUDENT_DATA = service.retrieveStudents()
                     .stream()
@@ -72,12 +75,12 @@ public class ClassRosterGUIController{
             frame = new JFrame("Class Roster Program");
             frame.setIconImage(new ImageIcon("src\\main\\resources\\images\\classrosterlogo.png").getImage());
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(750, 500);
+            frame.setSize(WIDTH, HEIGHT);
             frame.setBackground(MAIN_BG);
             frame.setResizable(false);
             frame.setLocationRelativeTo(null);
             mainPanel = new JPanel(new BorderLayout(10, 10)); // set content pane to custom JPanel
-            mainPanel.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
+            mainPanel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
             mainPanel.setBackground(MAIN_BG);
             mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             frame.setContentPane(mainPanel);
@@ -97,7 +100,7 @@ public class ClassRosterGUIController{
             headerPanel.add(title);
 
             // ACTIONS CONTAINER
-            actionPanel = new JPanel(new GridLayout(3, 1, 25, 25));
+            actionPanel = new JPanel(new GridLayout(4, 1, 25, 25));
             actionPanel.setPreferredSize(new Dimension(250, 500));
             actionPanel.setBackground(SUB_BG);
 
@@ -124,14 +127,25 @@ public class ClassRosterGUIController{
             changeViewButton.setForeground(TEXT_COLOR);
             changeViewButton.setHorizontalTextPosition(JButton.CENTER);
 
+            gradeAssignmentButton = new JButton("Grade Assignment");
+            gradeAssignmentButton.setFocusable(false);
+            gradeAssignmentButton.setBackground(SUB_BG);
+            gradeAssignmentButton.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+            gradeAssignmentButton.setForeground(TEXT_COLOR);
+            gradeAssignmentButton.setHorizontalTextPosition(JButton.CENTER);
+            gradeAssignmentButton.setVisible(!studentView);
+
+
             actionPanel.add(addButton);
             addButton.addActionListener(this);
             actionPanel.add(removeButton);
             removeButton.addActionListener(this);
             actionPanel.add(changeViewButton);
             changeViewButton.addActionListener(this);
+            actionPanel.add(gradeAssignmentButton);
+            gradeAssignmentButton.addActionListener(this);
 
-            // STUDENT PANEL
+            // ENTITY PANEL
             entityPanel = new JPanel(new GridLayout(1, 1));
             entityPanel.setPreferredSize(new Dimension(450, 500));
             entityPanel.setBackground(SUB_BG);
@@ -173,6 +187,7 @@ public class ClassRosterGUIController{
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            int idxToDelete;
 
             if (e.getSource() == addButton) {
                 if (studentView) {
@@ -211,8 +226,10 @@ public class ClassRosterGUIController{
                         );
                         assignmentToAdd.setTitle(JOptionPane.showInputDialog(frame, "Enter Assignment Title:"));
                         assignmentToAdd.setDueDate(
-                                Date.valueOf(LocalDate.parse(JOptionPane.showInputDialog(frame, "Enter Due Date: (YYYY-MM-DD)"))));
+                                Date.valueOf(LocalDate.parse(JOptionPane.showInputDialog(frame, "Enter Due Date: (YYYY-MM-DD)")))
+                        );
                         service.createAssignment(assignmentToAdd);
+                        assignmentTableModel.addRow(assignmentToAdd.toArray());
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(frame, "A field was incorrect.", "Error", JOptionPane.ERROR_MESSAGE);
                         throw new RuntimeException(ex.getMessage());
@@ -220,17 +237,23 @@ public class ClassRosterGUIController{
                 }
             }
             if (e.getSource() == removeButton) {
+                int checkDelete;
+                int entityID;
                 if (studentView) {
-                    int idxToDelete = studentTable.getSelectedRow();
-                    String studentID = String.valueOf(studentTable.getValueAt(idxToDelete, 0));
-                    int checkDelete = JOptionPane.showConfirmDialog(frame,
+                    idxToDelete = studentTable.getSelectedRow();
+                    entityID = Integer.parseInt(
+                            String.valueOf(
+                                    studentTable.getValueAt(idxToDelete, 0)
+                            )
+                    );
+                    checkDelete = JOptionPane.showConfirmDialog(frame,
                             "Are you sure you want to delete this student?",
                             "Confirm Delete",
                             JOptionPane.YES_NO_OPTION);
                     if (checkDelete == 0) {
                         try {
                             studentTableModel.removeRow(idxToDelete);
-                            service.removeStudent(Integer.parseInt(studentID));
+                            service.removeStudent(entityID);
                         } catch (ClassRosterPersistenceException ex) {
                             JOptionPane.showMessageDialog(frame,
                                     ex.getMessage(),
@@ -238,12 +261,29 @@ public class ClassRosterGUIController{
                                     JOptionPane.ERROR_MESSAGE);
                         }
                     }
+                } else {
+                    idxToDelete = assignmentTable.getSelectedRow();
+                    entityID = Integer.parseInt(
+                            String.valueOf(
+                                    assignmentTable.getValueAt(idxToDelete, 0)
+                            )
+                    );
+                    checkDelete = JOptionPane.showConfirmDialog(frame,
+                            "Are you sure you want to delete this assignment?",
+                            "Confirm Delete",
+                            JOptionPane.YES_NO_OPTION);
+                    if (checkDelete == 0) {
+                        assignmentTableModel.removeRow(idxToDelete);
+                        service.removeAssignment(entityID);
+
+                    }
                 }
             }
             if (e.getSource() == changeViewButton) {
                 studentView = !studentView;
+
                 if (studentView) {
-                    entityPanel.remove(assignmentPane );
+                    entityPanel.remove(assignmentPane);
                     entityPanel.add(studentPane);
                 } else {
                     entityPanel.remove(studentPane);
@@ -252,7 +292,64 @@ public class ClassRosterGUIController{
                 addButton.setText(studentView ? "Add Student" : "Add Assignment");
                 removeButton.setText(studentView ? "Remove Student" : "Remove Assignment");
                 changeViewButton.setText(studentView ? "View Assignments" : "View Students");
+                gradeAssignmentButton.setVisible(!studentView);
             }
+            if (e.getSource() == gradeAssignmentButton) {
+                idxToDelete = assignmentTable.getSelectedRow();
+                int assignmentID = Integer.parseInt(
+                        String.valueOf(
+                        assignmentTable.getValueAt(idxToDelete, 0)
+                    )
+                );
+                Assignment assignmentToGrade = service.retrieveAssignment(assignmentID);
+                try {
+                    new GradeAssignmentPage(assignmentToGrade);
+                } catch (ClassRosterPersistenceException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+    }
+
+    /*
+     * GradeAssignmentPage class for grading a specific assignment
+     */
+
+    private class GradeAssignmentPage {
+
+        private JFrame frame;
+
+        private JPanel mainPanel;
+        private DefaultTableModel gradedAssignmentTableModel;
+
+        public GradeAssignmentPage(Assignment assignment) throws ClassRosterPersistenceException {
+
+            // CONSTANTS
+            final String[] GRADED_ASSIGNMENT_HEADER_COLUMN = {"Student ID", "First Name", "Last Name", "Assignment ID", "Max Score", "Received Score"};
+            final Object[][] GRADED_ASSIGNMENT_DATA = service.retrieveStudents()
+                    .stream()
+                    .map(s -> new Object[] {s.getStudentID(), s.getFirstName(), s.getLastName(),
+                            assignment.getAssignmentID(), assignment.getMaxScore(),
+                            (double) 0})
+                    .toArray(Object[][]::new);
+
+            // MAIN PANEL
+            frame = new JFrame("Grade Assignment Page");
+            frame.setIconImage(new ImageIcon("src\\main\\resources\\images\\classrosterlogo.png").getImage());
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setSize(GUI.WIDTH, GUI.HEIGHT);
+            frame.setBackground(GUI.MAIN_BG);
+            frame.setResizable(false);
+            frame.setLocationRelativeTo(null);
+            mainPanel = new JPanel(new BorderLayout(10, 10)); // set content pane to custom JPanel
+            mainPanel.setPreferredSize(new Dimension(GUI.WIDTH, GUI.HEIGHT));
+            mainPanel.setBackground(GUI.MAIN_BG);
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            frame.setContentPane(mainPanel);
+
+
+
+            frame.setVisible(true);
         }
     }
 }

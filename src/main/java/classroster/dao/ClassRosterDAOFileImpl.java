@@ -10,6 +10,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.*;
 
+import classroster.dto.Assignment;
+import classroster.dto.GradedAssignment;
 import org.springframework.stereotype.Component;
 
 import classroster.dto.Student;
@@ -53,6 +55,46 @@ public class ClassRosterDAOFileImpl implements ClassRosterDAO {
 		Student stu = studentRoster.remove(studentID);
 		writeRoster();
 		return stu;
+	}
+
+	@Override
+	public Assignment getAssignment(Integer assignmentID) {
+		return null;
+	}
+
+	@Override
+	public List<Assignment> getAllAssignments() {
+		return null;
+	}
+
+	@Override
+	public void addAssignment(Assignment assignment) throws ClassRosterPersistenceException {
+
+	}
+
+	@Override
+	public Assignment removeAssignment(Integer assignmentID) {
+		return null;
+	}
+
+	@Override
+	public GradedAssignment getStudentGradedAssignment(Integer studentID, Integer assignmentID) {
+		return null;
+	}
+
+	@Override
+	public List<GradedAssignment> getStudentGradedAssignments(Integer studentID) {
+		return null;
+	}
+
+	@Override
+	public void addGradedAssignment(Assignment assignment, Integer receivedScore, Integer studentID) {
+
+	}
+
+	@Override
+	public GradedAssignment removeGradedAssignment(Integer studentID, Integer assignmentID) {
+		return null;
 	}
 
 	private Student unmarshalStudent(String studentInfo) {

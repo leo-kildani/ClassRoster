@@ -4,14 +4,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.sql.Date;
 
-@Entity
+@Entity(name = "GradedAssignment")
 @Table(name = "graded_assignments")
+@NoArgsConstructor
 public @Data class GradedAssignment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "graded_assignment_id")
     @Setter(AccessLevel.NONE)
     private int gradedAssignmentID;

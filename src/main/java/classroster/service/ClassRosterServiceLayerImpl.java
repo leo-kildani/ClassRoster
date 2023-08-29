@@ -8,6 +8,8 @@ package classroster.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import classroster.dto.Assignment;
+import classroster.dto.GradedAssignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -37,7 +39,7 @@ public class ClassRosterServiceLayerImpl implements ClassRosterServiceLayer {
 
 		int id = student.getStudentID();
 
-		validateDbSize();
+		validateDBSize(student);
 
 		// assure no duplicate id
 		while (dao.getStudent(id) != null)
@@ -67,24 +69,54 @@ public class ClassRosterServiceLayerImpl implements ClassRosterServiceLayer {
 		auditLog.writeAuditEntry("Student " + studentId + " REMOVED");
 		return stu;
 	}
-	
-	private void validateStudentData(Student student) throws ClassRosterDataValidationException {
-		if (student.getFirstName() == null
-				|| student.getFirstName().trim().length() == 0
-				|| student.getLastName() == null
-				|| student.getLastName().trim().length() == 0
-				|| student.getCohort() == null
-				|| student.getCohort().trim().length() == 0
-		)
-			
-			throw new ClassRosterDataValidationException("A field [ID, FirstName, LastName, Cohort] is missing.");
+
+	@Override
+	public void createAssignment(Assignment assignment) throws ClassRosterPersistenceException, ClassRosterDatabaseOverfillException, ClassRosterDataValidationException {
+		int id = assignment.getAssignmentID();
+
+		validateDBSize(assignment);
+
+		validateAssignmentData(assignment);
+
+		dao.addAssignment(assignment);
+		auditLog.writeAuditEntry("Assignment " + id + " Created");
 	}
 
-	// Max Database Size (8999)
-	private void validateDbSize() throws ClassRosterDatabaseOverfillException, ClassRosterPersistenceException {
-		int size = dao.getAllStudents().size();
-		if (size > 8999)
-			throw new ClassRosterDatabaseOverfillException("Maximum Database Size Exceeded.");
+	@Override
+	public void createGradedAssignment(Assignment assignment, int receivedScore, Student student) throws ClassRosterPersistenceException, ClassRosterDataValidationException {
+		validateStudentData(student);
+		validateAssignmentData(assignment);
+		dao.addGradedAssignment(assignment, receivedScore, student.getStudentID());
+	}
+
+	@Override
+	public List<Assignment> retrieveAssignments() {
+		return dao.getAllAssignments();
+	}
+
+	@Override
+	public List<GradedAssignment> retrieveGradedAssignments(Student student) {
+		return dao.getStudentGradedAssignments(student.getStudentID());
+	}
+
+	@Override
+	public Assignment retrieveAssignment(int assignmentID) {
+		return dao.getAssignment(assignmentID);
+	}
+
+	@Override
+	public GradedAssignment retrieveGradedAssignment(int studentID, int assignmentID) {
+		return dao.getStudentGradedAssignment(studentID, assignmentID);
+	}
+
+	@Override
+	public Assignment removeAssignment(int assignmentID) {
+		return dao.removeAssignment(assignmentID);
+	}
+
+	@Override
+	public GradedAssignment removeGradedAssignment(int studentID, int assignmentID) {
+		return dao.removeGradedAssignment(studentID, assignmentID);
 	}
 
 	@Override
@@ -109,5 +141,34 @@ public class ClassRosterServiceLayerImpl implements ClassRosterServiceLayer {
 		return students.stream()
 				.sorted(CompareStudent.COHORT)
 				.collect(Collectors.toList());
+	}
+
+	private void validateStudentData(Student student) throws ClassRosterDataValidationException {
+		if (student.getFirstName() == null
+				|| student.getFirstName().trim().length() == 0
+				|| student.getLastName() == null
+				|| student.getLastName().trim().length() == 0
+				|| student.getCohort() == null
+				|| student.getCohort().trim().length() == 0
+		)
+
+			throw new ClassRosterDataValidationException("A field [FirstName, LastName, Cohort] is missing.");
+	}
+
+	private void validateAssignmentData(Assignment assignment) throws ClassRosterDataValidationException {
+		if (assignment.getDueDate() == null || assignment.getTitle().trim().length() == 0)
+			throw new ClassRosterDataValidationException("A field [Name, DueDate] is missing.");
+	}
+
+	// Max Database Size (8999)
+	private <T> void validateDBSize(T entity) throws ClassRosterDatabaseOverfillException, ClassRosterPersistenceException {
+		int size = 0;
+		if (entity.getClass().equals(Student.class))
+			size = dao.getAllStudents().size();
+		else if (entity.getClass().equals(Assignment.class))
+			size = dao.getAllAssignments().size();
+
+		if (size > 8999)
+			throw new ClassRosterDatabaseOverfillException("Database is overflowing");
 	}
 }

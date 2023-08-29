@@ -10,7 +10,7 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.Random;
 
-@Entity
+@Entity(name = "Student")
 @Table(name = "students")
 public @Data class Student {
 	@Id
